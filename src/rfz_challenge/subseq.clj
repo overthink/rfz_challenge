@@ -36,7 +36,8 @@
 
 (defn equal-subseqs
   "Returns a lazy seq of contiguous subsequences of xs where each subsequence
-  sums to n.  Returns nil if subsequences can't be formed to satisfy this."
+  sums to n.  Returns nil if subsequences can't be formed to satisfy this
+  (TODO: nil part busted ATM)."
   [n xs]
   (let [[head tail :as xs] (take-sum n xs)]
     (cond
@@ -44,13 +45,15 @@
       :else (lazy-seq (cons head (equal-subseqs n tail))))))
 
 ;; cop-out -- technically equal-subseqs isn't correct at the moment.  It should
-;; return nil if it can't consume the entire input xs, but it's not... so I
-;; just run it against all potential sums, sort by number of segments
-;; created, and take the one that creates the most segments.
+;; return nil if it can't create segments that cover the entire input, but
+;; instead it just returns as many segments as it can, which is often only one.
+;; Out of time now, so I'm just running it against all potential sums, sort by
+;; number of segments created, and take the one that creates the most segments.
+;; Lame but works for the challenge.
 (->> (map (fn [x] [x (equal-subseqs x xs)]) (reductions + xs)) 
   (map (fn [[n xs]] [n (count xs)])) 
   (sort-by second) 
   (last) 
   (second)
   (println))
- kk:w
+
